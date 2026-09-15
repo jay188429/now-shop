@@ -126,7 +126,8 @@ function paintDetail() {
 
   document.querySelector("#add-to-cart").addEventListener("click", () => {
     Cart.add(p.id);
-    location.href = "cart.html";
+    // add_to_cart가 태그 관리자에 잡힐 시간을 준 뒤에 넘어간다
+    setTimeout(() => { location.href = "cart.html"; }, 250);
   });
 }
 
