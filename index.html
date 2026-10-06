@@ -128,5 +128,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer class="site"><div class="wrap"></div></footer>
 <script src="assets/shop.js"></script>
 <script src="assets/app.js"></script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyA0kTH70Gm6SXmk2i32D-wFpr97mXlufco",
+    authDomain: "haru-shop-32b38.firebaseapp.com",
+    projectId: "haru-shop-32b38",
+    storageBucket: "haru-shop-32b38.firebasestorage.app",
+    messagingSenderId: "675983958231",
+    appId: "1:675983958231:web:398bf3df20fb83967c9092"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  console.log("Firebase 연결:", app.options.projectId);
+</script>
 </body>
 </html>
