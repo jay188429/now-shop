@@ -90,6 +90,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script type="module">
     import {
       createUserWithEmailAndPassword,
+      sendEmailVerification,
       signInWithEmailAndPassword,
       signOut
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -108,22 +109,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       status.textContent = error.code;
     };
 
-    const redirectAfterAuth = () => {
-      if (nextPage === "mypage.html") {
-        setTimeout(() => { location.href = nextPage; }, 250);
-      }
+    const redirectAfterAuth = (afterSignup = false) => {
+      if (!afterSignup && !nextPage) return;
+      setTimeout(() => {
+        location.href = nextPage || "index.html";
+      }, 1200);
     };
 
     document.querySelector("#signup").addEventListener("click", async () => {
       try {
-        await createUserWithEmailAndPassword(auth, email.value, password.value);
+        const credential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+        await sendEmailVerification(credential.user);
         window.dataLayer = window.dataLayer || [];
         dataLayer.push({
           event: "sign_up",
           method: "email"
         });
-        showSuccess("가입되었습니다.");
-        redirectAfterAuth();
+        showSuccess("인증 메일을 보냈습니다. 메일함과 스팸함을 확인해 주세요.");
+        redirectAfterAuth(true);
       } catch (error) {
         showError(error);
       }

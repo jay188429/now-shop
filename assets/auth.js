@@ -12,6 +12,7 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
+auth.languageCode = "ko";
 
 function paintAuthArea(user) {
   document.querySelectorAll("nav.site").forEach(nav => {

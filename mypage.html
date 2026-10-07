@@ -43,20 +43,50 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer class="site"><div class="wrap"></div></footer>
 
 <script type="module">
-  import { signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+  import { sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
   import { auth, authReady } from "./assets/auth.js";
 
   const content = document.querySelector("#mypage-content");
   const email = document.querySelector("#user-email");
+  const verificationNotice = document.createElement("p");
+  verificationNotice.textContent = "이메일 인증이 필요합니다.";
+  const resendVerification = document.createElement("button");
+  resendVerification.className = "btn";
+  resendVerification.type = "button";
+  resendVerification.textContent = "인증 메일 다시 보내기";
+  content.querySelector(".wrap").insertBefore(verificationNotice, document.querySelector("#mypage-logout"));
+  content.querySelector(".wrap").insertBefore(resendVerification, document.querySelector("#mypage-logout"));
+  verificationNotice.hidden = true;
+  resendVerification.hidden = true;
 
-  authReady.then(user => {
+  const paintVerificationState = (user) => {
+    const unverified = !user.emailVerified;
+    verificationNotice.hidden = !unverified;
+    resendVerification.hidden = !unverified;
+  };
+
+  authReady.then(async user => {
     if (!user) {
       location.href = "login.html?next=mypage.html";
       return;
     }
 
+    await user.reload();
+    user = auth.currentUser;
     email.textContent = user.email;
+    paintVerificationState(user);
     content.hidden = false;
+  });
+
+  resendVerification.addEventListener("click", async () => {
+    try {
+      await sendEmailVerification(auth.currentUser);
+    } catch (error) {
+      if (error.code === "auth/too-many-requests") {
+        verificationNotice.textContent = "잠시 뒤에 다시 눌러 주세요.";
+        verificationNotice.hidden = false;
+      }
+    }
   });
 
   document.querySelector("#mypage-logout").addEventListener("click", async () => {
