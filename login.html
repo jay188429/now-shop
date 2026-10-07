@@ -86,30 +86,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </main>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import {
       createUserWithEmailAndPassword,
-      getAuth,
-      onAuthStateChanged,
       signInWithEmailAndPassword,
       signOut
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA0kTH70Gm6SXmk2i32D-wFpr97mXlufco",
-      authDomain: "haru-shop-32b38.firebaseapp.com",
-      projectId: "haru-shop-32b38",
-      storageBucket: "haru-shop-32b38.firebasestorage.app",
-      messagingSenderId: "675983958231",
-      appId: "1:675983958231:web:398bf3df20fb83967c9092"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    import { auth, authReady } from "./assets/auth.js";
     const form = document.querySelector("#auth-form");
     const email = document.querySelector("#email");
     const password = document.querySelector("#password");
     const status = document.querySelector("#status");
+    const nextPage = new URLSearchParams(location.search).get("next");
 
     const showSuccess = (message) => {
       status.textContent = message;
@@ -117,6 +104,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     const showError = (error) => {
       status.textContent = error.code;
+    };
+
+    const redirectAfterAuth = () => {
+      if (nextPage === "mypage.html") {
+        setTimeout(() => { location.href = nextPage; }, 250);
+      }
     };
 
     document.querySelector("#signup").addEventListener("click", async () => {
@@ -128,6 +121,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           method: "email"
         });
         showSuccess("가입되었습니다.");
+        redirectAfterAuth();
       } catch (error) {
         showError(error);
       }
@@ -138,6 +132,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       try {
         await signInWithEmailAndPassword(auth, email.value, password.value);
         showSuccess("로그인되었습니다.");
+        redirectAfterAuth();
       } catch (error) {
         showError(error);
       }
@@ -146,13 +141,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.querySelector("#logout").addEventListener("click", async () => {
       try {
         await signOut(auth);
-        showSuccess("로그아웃되었습니다.");
+        location.href = "index.html";
       } catch (error) {
         showError(error);
       }
     });
 
-    onAuthStateChanged(auth, (user) => {
+    authReady.then((user) => {
       if (user) {
         showSuccess("로그인 상태입니다.");
       }
