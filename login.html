@@ -82,6 +82,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button id="login" type="submit">로그인</button>
         <button id="logout" type="button">로그아웃</button>
       </div>
+      <a href="#" id="forgot-password">비밀번호를 잊으셨나요?</a>
       <small class="shared-computer-note">도서관이나 학교처럼 같이 쓰는 컴퓨터에서는, 하루 상점을 다 보신 뒤 로그아웃을 눌러 주세요.</small>
     </form>
     <p id="status" aria-live="polite"></p>
@@ -90,6 +91,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script type="module">
     import {
       createUserWithEmailAndPassword,
+      sendPasswordResetEmail,
       sendEmailVerification,
       signInWithEmailAndPassword,
       signOut
@@ -150,6 +152,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       } catch (error) {
         showError(error);
       }
+    });
+
+    document.querySelector("#forgot-password").addEventListener("click", async (event) => {
+      event.preventDefault();
+      if (!email.value.trim()) {
+        email.focus();
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email.value.trim());
+      } catch (error) {
+        // 가입된 주소인지 노출하지 않기 위해 같은 안내를 보여 준다.
+      }
+      showSuccess("메일을 보냈습니다. 가입된 주소라면 곧 도착합니다.");
     });
 
     authReady.then((user) => {
