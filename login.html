@@ -156,13 +156,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     document.querySelector("#forgot-password").addEventListener("click", async (event) => {
       event.preventDefault();
-      if (!email.value.trim()) {
-        email.focus();
+      const resetEmail = email.value.trim() || window.prompt("비밀번호 재설정 메일을 받을 이메일을 입력해 주세요.");
+      if (!resetEmail) {
         return;
       }
 
       try {
-        await sendPasswordResetEmail(auth, email.value.trim());
+        await sendPasswordResetEmail(auth, resetEmail.trim());
       } catch (error) {
         // 가입된 주소인지 노출하지 않기 위해 같은 안내를 보여 준다.
       }
